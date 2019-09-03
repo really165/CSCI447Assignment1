@@ -52,7 +52,19 @@ public class main {
 					Integer.parseInt(values[23]), Integer.parseInt(values[24]), Integer.parseInt(values[25]), Integer.parseInt(values[26]), Integer.parseInt(values[27]), Integer.parseInt(values[28]), 
 					Integer.parseInt(values[29]), Integer.parseInt(values[30]), Integer.parseInt(values[31]), Integer.parseInt(values[32]), Integer.parseInt(values[33]), Integer.parseInt(values[34]));
 			soyBeanData.add(newObservation);
-			newObservation.printSoyBean();
+			//newObservation.printSoyBean();
 		}
+		
+		// TODO: pre-processing for missing attributes
+		File file5 = new File("./breast-cancer-wisconsin.data");
+		Scanner scanner5 = new Scanner(file5);
+		ArrayList<BreastCancer> breastCancerData = new ArrayList<BreastCancer>();
+		while (scanner5.hasNextLine()){
+			String line = scanner5.nextLine();
+			String[] values = line.split(",");
+			BreastCancer newObservation = new BreastCancer(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]), Integer.parseInt(values[6]), Integer.parseInt(values[7]), Integer.parseInt(values[8]), Integer.parseInt(values[9]), Integer.parseInt(values[10]));
+			breastCancerData.add(newObservation);
+			//newObservation.printBreastCancer();
+	    }
 	}
 }
