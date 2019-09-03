@@ -35,10 +35,14 @@ public class main {
 		while (scanner3.hasNextLine()){
 			String line = scanner3.nextLine();
 			String[] values = line.split(",");
-			HouseVotes newObservation = new HouseVotes(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15], values[16]);
-			houseVotesData.add(newObservation);
-			//newObservation.printHouseVotes();
+			if(!hasMissingValue(values)){
+				HouseVotes newObservation = new HouseVotes(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15], values[16]);
+				houseVotesData.add(newObservation);
+				newObservation.printHouseVotes();
+			}
 		}
+		String mostFrequentValue = houseVotesMFV(3, houseVotesData);
+		System.out.println(mostFrequentValue);
 		
 		File file4 = new File("./soybean-small.data");
 		Scanner scanner4 = new Scanner(file4);
