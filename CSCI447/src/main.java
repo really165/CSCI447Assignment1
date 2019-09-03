@@ -39,6 +39,7 @@ public class main {
 			houseVotesData.add(newObservation);
 			//newObservation.printHouseVotes();
 		}
+		
 		File file4 = new File("./soybean-small.data");
 		Scanner scanner4 = new Scanner(file4);
 		ArrayList<SoyBean> soyBeanData = new ArrayList<SoyBean>();
@@ -62,9 +63,20 @@ public class main {
 		while (scanner5.hasNextLine()){
 			String line = scanner5.nextLine();
 			String[] values = line.split(",");
-			BreastCancer newObservation = new BreastCancer(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]), Integer.parseInt(values[6]), Integer.parseInt(values[7]), Integer.parseInt(values[8]), Integer.parseInt(values[9]), Integer.parseInt(values[10]));
-			breastCancerData.add(newObservation);
-			//newObservation.printBreastCancer();
+			if(!hasMissingValue(values)){
+				BreastCancer newObservation = new BreastCancer(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]), Integer.parseInt(values[6]), Integer.parseInt(values[7]), Integer.parseInt(values[8]), Integer.parseInt(values[9]), Integer.parseInt(values[10]));
+				breastCancerData.add(newObservation);
+				newObservation.printBreastCancer();
+			}
 	    }
+	}
+	
+	public static boolean hasMissingValue(String[] inputValues){
+		for(int i = 0; i < inputValues.length; i++){
+			if(inputValues[i].equals("?")) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
