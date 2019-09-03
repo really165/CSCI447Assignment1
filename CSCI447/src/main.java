@@ -79,4 +79,33 @@ public class main {
 		}
 		return false;
 	}
+	
+	//find the most frequent value in a column of the House Votes data
+	public static String houseVotesMFV(int column, ArrayList<HouseVotes> data){
+		if(data.isEmpty()){
+			return "?";
+		}
+		HouseVotes firstElement = data.get(0);
+		int yesCount = 0, noCount = 0;
+		for(int i = 0; i < data.size(); i++){
+			if(data.get(i).dataArray[column].equals("y")) {
+				yesCount++;
+			}
+			else if(data.get(i).dataArray[column].equals("n")) {
+				noCount++;
+			}
+			else {
+				//is an unknown value
+			}
+		}
+		if(yesCount==0&&noCount==0) {
+			return "?";
+		}
+		else if(yesCount>noCount) {
+			return "y";
+		}
+		else {
+			return "n";
+		}
+	}
 }
