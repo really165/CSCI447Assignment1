@@ -6,6 +6,7 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 public class main {
+	
 	public static void main(String[] args) throws FileNotFoundException {
 		File file1 = new File("./glass.data");
 		Scanner scanner1 = new Scanner(file1);
@@ -35,14 +36,28 @@ public class main {
 		while (scanner3.hasNextLine()){
 			String line = scanner3.nextLine();
 			String[] values = line.split(",");
-			if(!hasMissingValue(values)){
-				HouseVotes newObservation = new HouseVotes(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15], values[16]);
-				houseVotesData.add(newObservation);
-				newObservation.printHouseVotes();
+			HouseVotes newObservation = new HouseVotes(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15], values[16]);
+			houseVotesData.add(newObservation);
+			newObservation.printHouseVotes();
+		}
+		int numberOfColumns = 17;
+		//for each column
+		for(int i = 0; i < numberOfColumns; i++){
+			//get the most frequent value for that column
+			String mostFrequentValue = houseVotesMFV(i, houseVotesData);
+			//go down the column
+			for(int j = 0; j < houseVotesData.size(); j++) {
+				//if a value in that column is unkown
+				if(houseVotesData.get(j).dataArray[i].equals("?")) {
+					//replace that value with the most frequent value in that column
+					houseVotesData.get(j).changeValueAtIndex(i, mostFrequentValue);
+				}
 			}
 		}
-		String mostFrequentValue = houseVotesMFV(3, houseVotesData);
-		System.out.println(mostFrequentValue);
+		//print out final data
+		for(int k = 0; k < houseVotesData.size(); k++) {
+			houseVotesData.get(k).printHouseVotes();
+		}
 		
 		File file4 = new File("./soybean-small.data");
 		Scanner scanner4 = new Scanner(file4);
@@ -70,7 +85,7 @@ public class main {
 			if(!hasMissingValue(values)){
 				BreastCancer newObservation = new BreastCancer(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]), Integer.parseInt(values[4]), Integer.parseInt(values[5]), Integer.parseInt(values[6]), Integer.parseInt(values[7]), Integer.parseInt(values[8]), Integer.parseInt(values[9]), Integer.parseInt(values[10]));
 				breastCancerData.add(newObservation);
-				newObservation.printBreastCancer();
+				//newObservation.printBreastCancer();
 			}
 	    }
 	}
