@@ -58,6 +58,17 @@ public class main {
 		for(int k = 0; k < houseVotesData.size(); k++) {
 			houseVotesData.get(k).printHouseVotes();
 		}
+		//print out probability
+		System.out.println("democrat probability = " + houseVotesPartyProbability(houseVotesData, "democrat"));
+		System.out.println("republican probability = " + houseVotesPartyProbability(houseVotesData, "republican"));
+		//print out vote probability
+		System.out.println("vote 1 yes probability = " + houseVotesVoteProbability(houseVotesData, 1, "y"));
+		System.out.println("vote 1 no probability = " + houseVotesVoteProbability(houseVotesData, 1, "n"));
+		//print out vote probability given party
+		System.out.println("vote 1 yes democrat probability = " + houseVotesVoteProbability(houseVotesData, 1, "y", "democrat"));
+		System.out.println("vote 1 no democrat probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "democrat"));
+		System.out.println("vote 1 yes republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "y", "republican"));
+		System.out.println("vote 1 no republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "republican"));
 		
 		File file4 = new File("./soybean-small.data");
 		Scanner scanner4 = new Scanner(file4);
@@ -127,4 +138,66 @@ public class main {
 			return "n";
 		}
 	}
+	
+	//takes in data set and party as argument, returns probability
+	public static float houseVotesPartyProbability(ArrayList<HouseVotes> data, String party){
+		//keep track of members in given party
+		int partyCount = 0;
+		//keep track of total members
+		int totalCount = 0;
+		
+		for(int i = 0; i < data.size(); i++) {
+			if(data.get(i).dataArray[0].equals(party)) {
+				partyCount++;
+				totalCount++;
+			}
+			else {
+				totalCount++;
+			}
+		}
+		return (float)partyCount/(float)totalCount;
+	}
+	
+	//takes in data set, column, and vote, returns probability for that vote
+	public static float houseVotesVoteProbability(ArrayList<HouseVotes> data, int column, String vote) {
+		//keep track of number of votes with given outcome
+		int voteCount = 0;
+		//keep track of total votes
+		int totalVotes = 0;
+		
+		for(int i = 0; i < data.size(); i++) {
+			if(data.get(i).dataArray[column].equals(vote)) {
+				voteCount++;
+				totalVotes++;
+			}
+			else {
+				totalVotes++;
+			}
+		}
+		return (float)voteCount/(float)totalVotes;
+	}
+	
+	//takes in data set, column, vote, and party, returns probability for vote given party
+	public static float houseVotesVoteProbability(ArrayList<HouseVotes> data, int column, String vote, String party) {
+		//keep track of number of votes with given outcome and given party
+		int voteCount = 0;
+		//keep track of number of votes with given party
+		int totalVotes = 0;
+		
+		for(int i = 0; i < data.size(); i++) {
+			//if vote from the right party
+			if(data.get(i).dataArray[0].equals(party)) {
+				//if vote is the given outcome
+				if(data.get(i).dataArray[column].equals(vote)) {
+					voteCount++;
+					totalVotes++;
+				}
+				else {
+					totalVotes++;
+				}
+			}
+		}
+		return (float)voteCount/(float)totalVotes;
+	}
+	
 }
