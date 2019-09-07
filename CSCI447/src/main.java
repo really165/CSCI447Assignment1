@@ -18,7 +18,12 @@ public class main {
 			glassData.add(newObservation);
 			//newObservation.printGlass();
 		}
-		
+		for(int i=1; i<10; i++) {
+			continuous(i, glassData);
+		}
+		for(int k = 0; k < glassData.size(); k++) {
+			glassData.get(k).printGlass();
+		}
 		File file2 = new File("./iris.data");
 		Scanner scanner2 = new Scanner(file2);
 		ArrayList<Iris> irisData = new ArrayList<Iris>();
@@ -38,7 +43,7 @@ public class main {
 			String[] values = line.split(",");
 			HouseVotes newObservation = new HouseVotes(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15], values[16]);
 			houseVotesData.add(newObservation);
-			newObservation.printHouseVotes();
+			//newObservation.printHouseVotes();
 		}
 		int numberOfColumns = 17;
 		//for each column
@@ -56,19 +61,19 @@ public class main {
 		}
 		//print out final data
 		for(int k = 0; k < houseVotesData.size(); k++) {
-			houseVotesData.get(k).printHouseVotes();
+			//houseVotesData.get(k).printHouseVotes();
 		}
 		//print out probability
-		System.out.println("democrat probability = " + houseVotesPartyProbability(houseVotesData, "democrat"));
-		System.out.println("republican probability = " + houseVotesPartyProbability(houseVotesData, "republican"));
+		//System.out.println("democrat probability = " + houseVotesPartyProbability(houseVotesData, "democrat"));
+		//System.out.println("republican probability = " + houseVotesPartyProbability(houseVotesData, "republican"));
 		//print out vote probability
-		System.out.println("vote 1 yes probability = " + houseVotesVoteProbability(houseVotesData, 1, "y"));
-		System.out.println("vote 1 no probability = " + houseVotesVoteProbability(houseVotesData, 1, "n"));
+		//System.out.println("vote 1 yes probability = " + houseVotesVoteProbability(houseVotesData, 1, "y"));
+		//System.out.println("vote 1 no probability = " + houseVotesVoteProbability(houseVotesData, 1, "n"));
 		//print out vote probability given party
-		System.out.println("vote 1 yes democrat probability = " + houseVotesVoteProbability(houseVotesData, 1, "y", "democrat"));
-		System.out.println("vote 1 no democrat probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "democrat"));
-		System.out.println("vote 1 yes republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "y", "republican"));
-		System.out.println("vote 1 no republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "republican"));
+		//System.out.println("vote 1 yes democrat probability = " + houseVotesVoteProbability(houseVotesData, 1, "y", "democrat"));
+		//System.out.println("vote 1 no democrat probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "democrat"));
+		//System.out.println("vote 1 yes republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "y", "republican"));
+		//System.out.println("vote 1 no republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "republican"));
 		
 		File file4 = new File("./soybean-small.data");
 		Scanner scanner4 = new Scanner(file4);
@@ -110,6 +115,59 @@ public class main {
 		return false;
 	}
 	
+	//Discretize the continuous variables
+	public static void continuous(int column, ArrayList<Glass> data){
+		float m=10; //number of intervals
+		float min=100;
+		float max=0;
+		float[] tempArray=new float[data.size()];
+		int[] position=new int[data.size()];
+		
+		//Get min and max values of the data
+		for(int i=0; i<data.size(); i++) {
+			tempArray[i]=data.get(i).dataArray[column];
+			position[i]=i;
+			if(data.get(i).dataArray[column]<min) {
+				min=data.get(i).dataArray[column];
+			}
+			if(data.get(i).dataArray[column]>max) {
+				max=data.get(i).dataArray[column];
+			}
+		}
+		
+		int intervals=(int) (((max-min)/m)+0.5); //For equal width intervals
+		float temp;
+		int tempPosition;
+		
+		// Bubble Sort
+		for (int i=0; i<data.size(); i++) {
+			for (int j=1; j<data.size()-i; j++) {
+				if(tempArray[j-1]>tempArray[j]) {
+					temp=tempArray[j-1];
+					tempArray[j-1]=tempArray[j];
+					tempArray[j]=temp;
+					
+					tempPosition=position[j-1];
+					position[j-1]=position[j];
+					position[j]=position[j-1];
+				}
+			}
+		}
+		int count=0;
+		int itemPerInterval=((data.size())/((int)m));
+		
+		for(int i=0; i<tempArray.length; i++) {
+			for (int j=0; j<data.size(); j++) {
+				if(i==(itemPerInterval*(count+1))) {
+					count++;
+				}
+				if(data.get(j).dataArray[column]==tempArray[i]) {
+					data.get(j).setGroup(column, count);
+				}
+			}
+		}
+		
+	}
 	//find the most frequent value in a column of the House Votes data
 	public static String houseVotesMFV(int column, ArrayList<HouseVotes> data){
 		if(data.isEmpty()){
