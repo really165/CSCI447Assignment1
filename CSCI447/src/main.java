@@ -74,6 +74,8 @@ public class main {
 		//System.out.println("vote 1 no democrat probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "democrat"));
 		//System.out.println("vote 1 yes republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "y", "republican"));
 		//System.out.println("vote 1 no republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "republican"));
+		String[] testVotes = {"y","y","y","n","n","n","y","y","y","n","y","n","n","n","y","y"};
+		String party = partyGivenVotes(houseVotesData, testVotes);
 		
 		File file4 = new File("./soybean-small.data");
 		Scanner scanner4 = new Scanner(file4);
@@ -258,4 +260,38 @@ public class main {
 		return (float)voteCount/(float)totalVotes;
 	}
 	
+	public static String partyGivenVotes(ArrayList<HouseVotes> data, String[] votes) {
+		//houseVotesPartyProbability(houseVotesData, "democrat");
+		//houseVotesVoteProbability(houseVotesData, 1, "y");
+		//houseVotesVoteProbability(houseVotesData, 1, "n", "republican");
+		float numeratorDemocrat = 1;
+		float denominatorDemocrat = 1;
+		float numeratorRepublican = 1;
+		float denominatorRepublican = 1;
+		for(int i = 0; i < votes.length; i++) {
+			numeratorDemocrat = numeratorDemocrat * houseVotesVoteProbability(data, i+1, votes[i], "democrat");
+			denominatorDemocrat = denominatorDemocrat * houseVotesVoteProbability(data, i+1, votes[i]);
+			numeratorRepublican = numeratorRepublican * houseVotesVoteProbability(data, i+1, votes[i], "republican");
+			denominatorRepublican = denominatorRepublican * houseVotesVoteProbability(data, i+1, votes[i]);
+		}
+		numeratorDemocrat = numeratorDemocrat * houseVotesPartyProbability(data, "democrat");
+		numeratorRepublican = numeratorRepublican * houseVotesPartyProbability(data, "republican");
+		
+		float probabilityDemocrat = numeratorDemocrat/denominatorDemocrat;
+		System.out.println("probabilityDemocrat = " + probabilityDemocrat);
+		float probabilityRepublican = numeratorRepublican/denominatorRepublican;
+		System.out.println("probabilityRepublican = " + probabilityRepublican);
+		
+		if(probabilityDemocrat > probabilityRepublican) {
+			System.out.println("more likely to be democrat");
+			return "democrat";
+		}
+		else if(probabilityRepublican > probabilityDemocrat) {
+			System.out.println("more likely to be republican");
+			return "republican";
+		}
+		else {
+			return "?";
+		}
+	}
 }
