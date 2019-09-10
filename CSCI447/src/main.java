@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class main {
 	
@@ -76,6 +77,8 @@ public class main {
 		//System.out.println("vote 1 no republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "republican"));
 		String[] testVotes = {"y","y","y","n","n","n","y","y","y","n","y","n","n","n","y","y"};
 		String party = partyGivenVotes(houseVotesData, testVotes);
+		ArrayList<HouseVotes> shuffledList = houseVotesShuffle(houseVotesData, 1);
+		party = partyGivenVotes(shuffledList, testVotes);
 		
 		File file4 = new File("./soybean-small.data");
 		Scanner scanner4 = new Scanner(file4);
@@ -293,5 +296,38 @@ public class main {
 		else {
 			return "?";
 		}
+	}
+	
+	//shuffles data in one column of HouseVotes
+	public static ArrayList<HouseVotes> houseVotesShuffle(ArrayList<HouseVotes> data, int column) {
+		int yesVotes = 0;
+		int noVotes = 0;
+		for(int i = 0; i < data.size(); i++) {
+			if(data.get(i).dataArray[column].equals("y")) {
+				yesVotes++;
+			}
+			else {
+				noVotes++;
+			}
+		}
+		//used for random index
+		Random randnum = new Random();
+		ArrayList<HouseVotes> listCopy = (ArrayList<HouseVotes>) data.clone();
+		ArrayList<HouseVotes> newList = new ArrayList<HouseVotes>();
+		for(int j = 0; j < yesVotes; j++) {
+			int index = randnum.nextInt(listCopy.size());
+			HouseVotes newMember = listCopy.get(index);
+			listCopy.remove(index);
+			newMember.changeValueAtIndex(column, "y");
+			newList.add(newMember);
+		}
+		for(int k = 0; k < noVotes; k++) {
+			int index = randnum.nextInt(listCopy.size());
+			HouseVotes newMember = listCopy.get(index);
+			listCopy.remove(index);
+			newMember.changeValueAtIndex(column, "n");
+			newList.add(newMember);
+		}
+		return newList;
 	}
 }
