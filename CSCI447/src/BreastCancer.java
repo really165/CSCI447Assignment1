@@ -33,5 +33,22 @@ public class BreastCancer {
     			", Single Epithelial Cell Size: " + this.singleEpithelialCellSize + ", Bare Nuclei: " + this.bareNuclei + 
     			", Bland Chromatin: " + this.blandChromatin + ", Normal Nucleoli: " + this.normalNucleoli + ", Mitoses: " + this.mitoses + ", Type: " + this.type); 
     }
+    
+    public int getColumn(int column) {
+    	switch(column) {
+    	case 0: return this.ID;
+    	case 1: return this.clumpThickness;
+    	case 2: return this.uniformityCellSize; 
+    	case 3: return this.uniformityCellShape;
+    	case 4:	return this.marginalAdhesion; 
+    	case 5: return this.singleEpithelialCellSize; 
+    	case 6: return this.bareNuclei; 
+    	case 7: return this.blandChromatin; 
+    	case 8: return this.normalNucleoli; 
+    	case 9: return this.mitoses; 
+    	case 10: return this.type; 
+    	}
+    	return 1000;
+    }
 }
 

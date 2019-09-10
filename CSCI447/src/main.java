@@ -23,8 +23,9 @@ public class main {
 			continuous(i, glassData);
 		}
 		for(int k = 0; k < glassData.size(); k++) {
-			glassData.get(k).printGlass();
+			//glassData.get(k).printGlass();
 		}
+		
 		File file2 = new File("./iris.data");
 		Scanner scanner2 = new Scanner(file2);
 		ArrayList<Iris> irisData = new ArrayList<Iris>();
@@ -34,6 +35,12 @@ public class main {
 			Iris newObservation = new Iris(Float.parseFloat(values[0]), Float.parseFloat(values[1]), Float.parseFloat(values[2]), Float.parseFloat(values[3]), values[4]);
 			irisData.add(newObservation);
 			//newObservation.printIris();
+		}
+		for(int i=0; i<4; i++) {
+			continuousIris(i, irisData);
+		}
+		for(int k = 0; k < irisData.size(); k++) {
+			//irisData.get(k).printIris();
 		}
 		
 		File file3 = new File("./house-votes-84.data");
@@ -75,10 +82,10 @@ public class main {
 		//System.out.println("vote 1 no democrat probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "democrat"));
 		//System.out.println("vote 1 yes republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "y", "republican"));
 		//System.out.println("vote 1 no republican probability = " + houseVotesVoteProbability(houseVotesData, 1, "n", "republican"));
-		String[] testVotes = {"y","y","y","n","n","n","y","y","y","n","y","n","n","n","y","y"};
-		String party = partyGivenVotes(houseVotesData, testVotes);
-		ArrayList<HouseVotes> shuffledList = houseVotesShuffle(houseVotesData, 1);
-		party = partyGivenVotes(shuffledList, testVotes);
+		//String[] testVotes = {"y","y","y","n","n","n","y","y","y","n","y","n","n","n","y","y"};
+		//String party = partyGivenVotes(houseVotesData, testVotes);
+		//ArrayList<HouseVotes> shuffledList = houseVotesShuffle(houseVotesData, 1);
+		//party = partyGivenVotes(shuffledList, testVotes);
 		
 		File file4 = new File("./soybean-small.data");
 		Scanner scanner4 = new Scanner(file4);
@@ -96,7 +103,6 @@ public class main {
 			//newObservation.printSoyBean();
 		}
 		
-		// TODO: pre-processing for missing attributes
 		File file5 = new File("./breast-cancer-wisconsin.data");
 		Scanner scanner5 = new Scanner(file5);
 		ArrayList<BreastCancer> breastCancerData = new ArrayList<BreastCancer>();
@@ -109,8 +115,11 @@ public class main {
 				//newObservation.printBreastCancer();
 			}
 	    }
+		int[] values= {1, 1, 1, 1, 1, 1, 1, 1, 1};
+		breastCancer(breastCancerData, values);
 	}
-	
+
+/////////////////////////////////////////////Pre processing/////////////////////////////////////////////////////////////////////////////////////////
 	public static boolean hasMissingValue(String[] inputValues){
 		for(int i = 0; i < inputValues.length; i++){
 			if(inputValues[i].equals("?")) {
@@ -120,11 +129,9 @@ public class main {
 		return false;
 	}
 	
-	//Discretize the continuous variables
+	//Discretize the continuous variables for the glass data
 	public static void continuous(int column, ArrayList<Glass> data){
 		float m=10; //number of intervals
-		float min=100;
-		float max=0;
 		float[] tempArray=new float[data.size()];
 		int[] position=new int[data.size()];
 		
@@ -132,15 +139,8 @@ public class main {
 		for(int i=0; i<data.size(); i++) {
 			tempArray[i]=data.get(i).dataArray[column];
 			position[i]=i;
-			if(data.get(i).dataArray[column]<min) {
-				min=data.get(i).dataArray[column];
-			}
-			if(data.get(i).dataArray[column]>max) {
-				max=data.get(i).dataArray[column];
-			}
 		}
 		
-		int intervals=(int) (((max-min)/m)+0.5); //For equal width intervals
 		float temp;
 		int tempPosition;
 		
@@ -151,7 +151,6 @@ public class main {
 					temp=tempArray[j-1];
 					tempArray[j-1]=tempArray[j];
 					tempArray[j]=temp;
-					
 					tempPosition=position[j-1];
 					position[j-1]=position[j];
 					position[j]=position[j-1];
@@ -173,6 +172,51 @@ public class main {
 		}
 		
 	}
+	
+	//Discretize the continuous variables for the iris data
+		public static void continuousIris(int column, ArrayList<Iris> data){
+			float m=10; //number of intervals
+			float[] tempArray=new float[data.size()];
+			int[] position=new int[data.size()];
+			
+			//Get min and max values of the data
+			for(int i=0; i<data.size(); i++) {
+				tempArray[i]=data.get(i).dataArray[column];
+				position[i]=i;
+			}
+			
+			float temp;
+			int tempPosition;
+			
+			// Bubble Sort
+			for (int i=0; i<data.size(); i++) {
+				for (int j=1; j<data.size()-i; j++) {
+					if(tempArray[j-1]>tempArray[j]) {
+						temp=tempArray[j-1];
+						tempArray[j-1]=tempArray[j];
+						tempArray[j]=temp;
+						tempPosition=position[j-1];
+						position[j-1]=position[j];
+						position[j]=position[j-1];
+					}
+				}
+			}
+			int count=0;
+			int itemPerInterval=((data.size())/((int)m));
+			
+			for(int i=0; i<tempArray.length; i++) {
+				for (int j=0; j<data.size(); j++) {
+					if(i==(itemPerInterval*(count+1))) {
+						count++;
+					}
+					if(data.get(j).dataArray[column]==tempArray[i]) {
+						data.get(j).setGroup(column, count);
+					}
+				}
+			}
+			
+		}
+		
 	//find the most frequent value in a column of the House Votes data
 	public static String houseVotesMFV(int column, ArrayList<HouseVotes> data){
 		if(data.isEmpty()){
@@ -201,7 +245,10 @@ public class main {
 			return "n";
 		}
 	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	/////////////////////////////////////////Algorithm////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////Houses Votes//////////////////////////////////////////////////////////////////////////
 	//takes in data set and party as argument, returns probability
 	public static float houseVotesPartyProbability(ArrayList<HouseVotes> data, String party){
 		//keep track of members in given party
@@ -297,37 +344,149 @@ public class main {
 			return "?";
 		}
 	}
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////breastCancer//////////////////////////////////////////////////////////////////////////////////////////////////
+	public static void breastCancer(ArrayList<BreastCancer> data, int[] values) {
+		int totalBenign=0;
+		int totalMalignant=0;
+		int totalValues=0;
+		
+		//For benigns 
+		int[] BclumpThickness=new int[10];
+		int[] Bucs=new int[10]; //Uniformity Cell Size
+		int[] BucShape=new int[10]; //Uniformity Cell Shape
+		int[] BmA=new int[10]; //Marginal Adhesion
+		int[] Bscs=new int[10]; //Single Ephitelial Cell Size
+		int[] Bbn=new int[10]; //Bare nuclei
+		int[] Bbc=new int[10]; //Bland Chromatin
+		int[] Bnc=new int[10]; //Normal Nuclei
+		int[] Bm=new int[10]; //Mitoses
+		
+		//For Malignants
+		int[] MclumpThickness=new int[10];
+		int[] Mucs=new int[10]; //Uniformity Cell Size
+		int[] MucShape=new int[10]; //Uniformity Cell Shape
+		int[] MmA=new int[10]; //Marginal Adhesion
+		int[] Mscs=new int[10]; //Single Ephitelial Cell Size
+		int[] Mbn=new int[10]; //Bare nuclei
+		int[] Mbc=new int[10]; //Bland Chromatin
+		int[] Mnc=new int[10]; //Normal Nuclei
+		int[] Mm=new int[10]; //Mitoses
+		
+		// Counter
+		for(int i = 0; i < data.size(); i++) {// Rows
+			for(int j=1; j<11; j++) {// Columns
+				if (data.get(i).getColumn(10)==2) {
+					switch(j) {
+					case 1: BclumpThickness[data.get(i).getColumn(j)-1]++; break;
+					case 2: Bucs[data.get(i).getColumn(j)-1]++; break;
+					case 3: BucShape[data.get(i).getColumn(j)-1]++; break;
+					case 4: BmA[data.get(i).getColumn(j)-1]++; break;
+					case 5: Bscs[data.get(i).getColumn(j)-1]++; break;
+					case 6: Bbn[data.get(i).getColumn(j)-1]++; break;
+					case 7: Bbc[data.get(i).getColumn(j)-1]++; break;
+					case 8: Bnc[data.get(i).getColumn(j)-1]++; break;
+					case 9: Bm[data.get(i).getColumn(j)-1]++; break;
+					case 10: totalBenign++; break;
+					}
+				}
+				else if (data.get(i).getColumn(10)==4) {
+					switch(j) {
+					case 1: MclumpThickness[data.get(i).getColumn(j)-1]++; break;
+					case 2: Mucs[data.get(i).getColumn(j)-1]++; break;
+					case 3: MucShape[data.get(i).getColumn(j)-1]++; break;
+					case 4: MmA[data.get(i).getColumn(j)-1]++; break;
+					case 5: Mscs[data.get(i).getColumn(j)-1]++; break;
+					case 6: Mbn[data.get(i).getColumn(j)-1]++; break;
+					case 7: Mbc[data.get(i).getColumn(j)-1]++; break;
+					case 8: Mnc[data.get(i).getColumn(j)-1]++; break;
+					case 9: Mm[data.get(i).getColumn(j)-1]++; break;
+					case 10: totalMalignant++; break;
+					}
+				}
+				
+			}
+		}
+		for(int i=0; i<10; i++) {
+			//System.out.println(Bm[i]);
+		}
+		
+		totalValues=totalBenign+totalMalignant;
 	
+		// Benign Probabilities
+		float pBClumpThickness= (float) (BclumpThickness[values[0]-1])/totalBenign;
+		float pBUcs=(float) (Bucs[values[1]-1])/totalBenign;
+		float pBUcShape=(float) (BucShape[values[2]-1])/totalBenign;
+		float pBMA=(float) (BmA[values[3]-1])/totalBenign;
+		float pBScs=(float) (Bscs[values[4]-1])/totalBenign;
+		float pBBn=(float) (Bbn[values[5]-1])/totalBenign;
+		float pBBc=(float) (Bbc[values[6]-1])/totalBenign;
+		float pBNc=(float) (Bnc[values[7]-1])/totalBenign;
+		float pBM=(float) (Bm[values[8]-1])/totalBenign;
+		
+		// Malignant Probabilities
+		float pMClumpThickness= (float) (MclumpThickness[values[0]-1])/totalMalignant;
+		float pMUcs=(float) (Mucs[values[1]-1])/totalMalignant;
+		float pMUcShape=(float) (MucShape[values[2]-1])/totalMalignant;
+		float pMMA=(float) (MmA[values[3]-1])/totalMalignant;
+		float pMScs=(float) (Mscs[values[4]-1])/totalMalignant;
+		float pMBn=(float) (Mbn[values[5]-1])/totalMalignant;
+		float pMBc=(float) (Mbc[values[6]-1])/totalMalignant;
+		float pMNc=(float) (Mnc[values[7]-1])/totalMalignant;
+		float pMM=(float) (Mm[values[8]-1])/totalMalignant;
+		
+		float benign=(float) totalBenign/totalValues;
+		float malignant=(float) totalMalignant/totalValues;
+		
+		float pBenign= (float) pBClumpThickness * pBUcs * pBUcShape * pBMA * pBScs * pBBn * pBBc * pBNc * pBM * benign;
+		float pMalignant= (float) pMClumpThickness * pMUcs * pMUcShape * pMMA * pMScs * pMBn * pMBc * pMNc * pMM * malignant;
+		
+		System.out.println(pBenign);
+		System.out.println(pMalignant);
+		if(pBenign>pMalignant) {
+			System.out.println("Benign have a higher probability");
+		}
+		else if(pBenign<pMalignant) {
+			System.out.println("Malignant have a higher probability");
+		}
+		else { //Same
+			System.out.println("Benign and Malignant have the same probability");
+		}
+}
+
+	///////////////////////////////////10%/////////////////////////////////////////////////////////////////
 	//shuffles data in one column of HouseVotes
-	public static ArrayList<HouseVotes> houseVotesShuffle(ArrayList<HouseVotes> data, int column) {
-		int yesVotes = 0;
-		int noVotes = 0;
-		for(int i = 0; i < data.size(); i++) {
-			if(data.get(i).dataArray[column].equals("y")) {
-				yesVotes++;
+		public static ArrayList<HouseVotes> houseVotesShuffle(ArrayList<HouseVotes> data, int column) {
+			int yesVotes = 0;
+			int noVotes = 0;
+			for(int i = 0; i < data.size(); i++) {
+				if(data.get(i).dataArray[column].equals("y")) {
+					yesVotes++;
+				}
+				else {
+					noVotes++;
+				}
 			}
-			else {
-				noVotes++;
+			//used for random index
+			Random randnum = new Random();
+			ArrayList<HouseVotes> listCopy = (ArrayList<HouseVotes>) data.clone();
+			ArrayList<HouseVotes> newList = new ArrayList<HouseVotes>();
+			for(int j = 0; j < yesVotes; j++) {
+				int index = randnum.nextInt(listCopy.size());
+				HouseVotes newMember = listCopy.get(index);
+				listCopy.remove(index);
+				newMember.changeValueAtIndex(column, "y");
+				newList.add(newMember);
 			}
+			for(int k = 0; k < noVotes; k++) {
+				int index = randnum.nextInt(listCopy.size());
+				HouseVotes newMember = listCopy.get(index);
+				listCopy.remove(index);
+				newMember.changeValueAtIndex(column, "n");
+				newList.add(newMember);
+			}
+			return newList;
 		}
-		//used for random index
-		Random randnum = new Random();
-		ArrayList<HouseVotes> listCopy = (ArrayList<HouseVotes>) data.clone();
-		ArrayList<HouseVotes> newList = new ArrayList<HouseVotes>();
-		for(int j = 0; j < yesVotes; j++) {
-			int index = randnum.nextInt(listCopy.size());
-			HouseVotes newMember = listCopy.get(index);
-			listCopy.remove(index);
-			newMember.changeValueAtIndex(column, "y");
-			newList.add(newMember);
-		}
-		for(int k = 0; k < noVotes; k++) {
-			int index = randnum.nextInt(listCopy.size());
-			HouseVotes newMember = listCopy.get(index);
-			listCopy.remove(index);
-			newMember.changeValueAtIndex(column, "n");
-			newList.add(newMember);
-		}
-		return newList;
-	}
+	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
