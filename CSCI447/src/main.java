@@ -25,8 +25,9 @@ public class main {
 		for(int k = 0; k < glassData.size(); k++) {
 			//glassData.get(k).printGlass();
 		}
-		int[] values1= {4,4,6,5,4,5,3,1,7};
-		glass(glassData, values1);
+		//int[] values1= {4,4,6,5,4,5,3,1,7};
+		//glass(glassData, values1);
+		
 		File file2 = new File("./iris.data");
 		Scanner scanner2 = new Scanner(file2);
 		ArrayList<Iris> irisData = new ArrayList<Iris>();
@@ -43,6 +44,8 @@ public class main {
 		for(int k = 0; k < irisData.size(); k++) {
 			//irisData.get(k).printIris();
 		}
+		int[] values1= {4,1,7,7};
+		iris(irisData, values1);
 		
 		File file3 = new File("./house-votes-84.data");
 		Scanner scanner3 = new Scanner(file3);
@@ -741,7 +744,6 @@ public class main {
 		int[] totals=new int[7]; //0 building_windows_float_processed, 1 for building_windows_non_float_processed, 2 for vehicle_windows_float_processed
 	      						//3 for vehicle_windows_non_float_processed (none in this database), 4  for containers, 5 for tableware, 6 for headlamps
 		
-		//For D1 
 		int[] ri= new int[77]; //11 for each class
 		int[] na= new int[77]; //11 for each class
 		int[] mg= new int[77]; //11 for each class
@@ -869,7 +871,7 @@ public class main {
 		float[] finalProbability= new float[7];  //0 building_windows_float_processed, 1 for building_windows_non_float_processed, 2 for vehicle_windows_float_processed
 												//3 for vehicle_windows_non_float_processed (none in this database), 4  for containers, 5 for tableware, 6 for headlamps
 		
-		for (int i=0; i<4; i++) {
+		for (int i=0; i<7; i++) {
 			if(i!=3) {
 			probability[9*i+0]=(float) (ri[11*i+values[0]])/totals[i];
 			probability[9*i+1]=(float) (na[11*i+values[1]])/totals[i];
@@ -912,6 +914,76 @@ public class main {
 		else if (finalProbability[6]>=finalProbability[0] && finalProbability[6]>=finalProbability[1] && finalProbability[6]>=finalProbability[2]
 				 && finalProbability[6]>=finalProbability[3]  && finalProbability[6]>=finalProbability[4]  && finalProbability[6]>=finalProbability[5]) {
 			System.out.println("Headlamps has the biggest probability");
+		}
+}
+	
+////////////////////////////////////////////Iris/////////////////////////////////////////////////////////////////
+	public static void iris(ArrayList<Iris> data, int[] values) {
+		int[] totals=new int[3]; //0 Iris Setosa, 1 for Iris Versicolour, 2 for Virginica
+	      						
+		int[] sepalLength= new int[33]; //11 for each class
+		int[] sepalWidth= new int[33]; //11 for each class
+		int[] petalLength= new int[33]; //11 for each class
+		int[] petalWidth= new int[33]; //11 for each class
+
+		// Counter
+		for(int i = 0; i < data.size(); i++) {// Rows
+			for(int j=0; j<5; j++) {// Columns
+				if(data.get(i).getColumn(4)==1) {
+					switch(j) {
+			    	case 0: sepalLength[data.get(i).getColumn(j)]++; break;
+			    	case 1: sepalWidth[data.get(i).getColumn(j)]++;  break;
+			    	case 2: petalLength[data.get(i).getColumn(j)]++; break;
+			    	case 3:	petalWidth[data.get(i).getColumn(j)]++;  break;
+			    	case 4: totals[0]++; break;
+			    	}
+				}
+				else if(data.get(i).getColumn(4)==2) {
+					switch(j) {
+			    	case 0: sepalLength[11+data.get(i).getColumn(j)]++; break;
+			    	case 1: sepalWidth[11+data.get(i).getColumn(j)]++;  break;
+			    	case 2: petalLength[11+data.get(i).getColumn(j)]++; break;
+			    	case 3:	petalWidth[11+data.get(i).getColumn(j)]++;  break;
+			    	case 4: totals[1]++; break;
+			    	}
+				}
+				else if(data.get(i).getColumn(4)==3) {
+					switch(j) {
+			    	case 0: sepalLength[22+data.get(i).getColumn(j)]++; break;
+			    	case 1: sepalWidth[22+data.get(i).getColumn(j)]++;  break;
+			    	case 2: petalLength[22+data.get(i).getColumn(j)]++; break;
+			    	case 3:	petalWidth[22+data.get(i).getColumn(j)]++;  break;
+			    	case 4: totals[2]++; break;
+			    	}
+				}
+			}
+		}
+		int totalValues=totals[0]+totals[1]+totals[2];
+		float p1= (float) totals[0]/totalValues;
+		float p2= (float) totals[1]/totalValues;
+		float p3= (float) totals[2]/totalValues;
+		float[] pi= {p1, p2, p3};
+		float[] probability= new float [12];
+		float[] finalProbability= new float[3];  //0 Iris Setosa, 1 for Iris Versicolour, 2 for Virginica
+		
+		for (int i=0; i<3; i++) {
+			if(i!=3) {
+			probability[4*i+0]=(float) (sepalLength[11*i+values[0]])/totals[i];
+			probability[4*i+1]=(float) (sepalWidth[11*i+values[1]])/totals[i];
+			probability[4*i+2]=(float) (petalLength[11*i+values[2]])/totals[i];
+			probability[4*i+3]=(float) (petalWidth[11*i+values[3]])/totals[i];
+			
+			finalProbability[i]=(float) probability[4*i+0]*probability[4*i+1]*probability[4*i+2]*probability[4*i+3]*pi[i];
+			}
+		}
+		if (finalProbability[0]>=finalProbability[1] && finalProbability[0]>=finalProbability[2]) {
+			System.out.println("Iris Setosa has the biggest probability");
+		}
+		else if (finalProbability[1]>=finalProbability[0] && finalProbability[1]>=finalProbability[2]) {
+			System.out.println("Iris Versicolour has the biggest probability");
+		}
+		else if (finalProbability[2]>=finalProbability[0] && finalProbability[2]>=finalProbability[1]) {
+			System.out.println("Iris Virginica has the biggest probability");
 		}
 }
 	///////////////////////////////////10%/////////////////////////////////////////////////////////////////
