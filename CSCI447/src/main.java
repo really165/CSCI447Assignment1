@@ -25,7 +25,8 @@ public class main {
 		for(int k = 0; k < glassData.size(); k++) {
 			//glassData.get(k).printGlass();
 		}
-		
+		int[] values1= {4,4,6,5,4,5,3,1,7};
+		glass(glassData, values1);
 		File file2 = new File("./iris.data");
 		Scanner scanner2 = new Scanner(file2);
 		ArrayList<Iris> irisData = new ArrayList<Iris>();
@@ -103,8 +104,8 @@ public class main {
 			//newObservation.printSoyBean();
 		}
 		
-		int[] values1= {0,1,2,1,0,3,1,1,0,2,1,1,0,2,2,0,0,0,1,0,1,2,0,0,0,0,0,3,4,0,0,0,0,0,1};
-		soyBean(soyBeanData, values1);
+		//int[] values1= {0,1,2,1,0,3,1,1,0,2,1,1,0,2,2,0,0,0,1,0,1,2,0,0,0,0,0,3,4,0,0,0,0,0,1};
+		//soyBean(soyBeanData, values1);
 		
 		File file5 = new File("./breast-cancer-wisconsin.data");
 		Scanner scanner5 = new Scanner(file5);
@@ -718,24 +719,200 @@ public class main {
 					*probability[35*i+27]*probability[35*i+28]*probability[35*i+29]*probability[35*i+30]*probability[35*i+31]*probability[35*i+32]*probability[35*i+33]
 					*probability[35*i+34]*pDi[i];
 		}
-		System.out.println(finalProbability[0]);
-		System.out.println(finalProbability[1]);
-		System.out.println(finalProbability[2]);
-		System.out.println(finalProbability[3]);
-		if (finalProbability[0]>finalProbability[1] && finalProbability[0]>finalProbability[2] && finalProbability[0]>finalProbability[3]) {
+
+		if (finalProbability[0]>=finalProbability[1] && finalProbability[0]>=finalProbability[2] && finalProbability[0]>=finalProbability[3]) {
 			System.out.println("D1 has the biggest probability");
 		}
-		else if (finalProbability[1]>finalProbability[0] && finalProbability[1]>finalProbability[2] && finalProbability[1]>finalProbability[3]) {
+		else if (finalProbability[1]>=finalProbability[0] && finalProbability[1]>=finalProbability[2] && finalProbability[1]>=finalProbability[3]) {
 			System.out.println("D2 has the biggest probability");
 		}
-		else if (finalProbability[2]>finalProbability[1] && finalProbability[2]>finalProbability[0] && finalProbability[2]>finalProbability[3]) {
+		else if (finalProbability[2]>=finalProbability[1] && finalProbability[2]>=finalProbability[0] && finalProbability[2]>=finalProbability[3]) {
 			System.out.println("D3 has the biggest probability");
 		}
-		else if (finalProbability[3]>finalProbability[1] && finalProbability[3]>finalProbability[2] && finalProbability[3]>finalProbability[0]) {
+		else if (finalProbability[3]>=finalProbability[1] && finalProbability[3]>=finalProbability[2] && finalProbability[3]>=finalProbability[0]) {
 			System.out.println("D4 has the biggest probability");
 		}
 		
 			
+}
+	
+////////////////////////////////Glass///////////////////////////////////////////////////////////////////////////////////////
+	public static void glass(ArrayList<Glass> data, int[] values) {
+		int[] totals=new int[7]; //0 building_windows_float_processed, 1 for building_windows_non_float_processed, 2 for vehicle_windows_float_processed
+	      						//3 for vehicle_windows_non_float_processed (none in this database), 4  for containers, 5 for tableware, 6 for headlamps
+		
+		//For D1 
+		int[] ri= new int[77]; //11 for each class
+		int[] na= new int[77]; //11 for each class
+		int[] mg= new int[77]; //11 for each class
+		int[] al= new int[77]; //11 for each class
+		int[] si= new int[77]; //11 for each class
+		int[] k= new int[77]; //11 for each class
+		int[] ca= new int[77]; //11 for each class
+		int[] ba= new int[77]; //11 for each class
+		int[] fe= new int[77]; //11 for each class
+
+	
+		// Counter
+		for(int i = 0; i < data.size(); i++) {// Rows
+			for(int j=1; j<11; j++) {// Columns
+				if(data.get(i).getColumn(10)==1) {
+					switch(j) {
+			    	case 1: ri[data.get(i).getColumn(j)]++; break;
+			    	case 2: na[data.get(i).getColumn(j)]++;  break;
+			    	case 3: mg[data.get(i).getColumn(j)]++; break;
+			    	case 4:	al[data.get(i).getColumn(j)]++;  break;
+			    	case 5: si[data.get(i).getColumn(j)]++;  break;
+			    	case 6: k[data.get(i).getColumn(j)]++;  break;
+			    	case 7: ca[data.get(i).getColumn(j)]++;  break;
+			    	case 8: ba[data.get(i).getColumn(j)]++;  break;
+			    	case 9: fe[data.get(i).getColumn(j)]++;  break;
+			    	case 10: totals[0]++; break;
+			    	}
+				}
+				else if(data.get(i).getColumn(10)==2) {
+					switch(j) {
+			    	case 1: ri[11+data.get(i).getColumn(j)]++; break;
+			    	case 2: na[11+data.get(i).getColumn(j)]++;  break;
+			    	case 3: mg[11+data.get(i).getColumn(j)]++; break;
+			    	case 4:	al[11+data.get(i).getColumn(j)]++;  break;
+			    	case 5: si[11+data.get(i).getColumn(j)]++;  break;
+			    	case 6: k[11+data.get(i).getColumn(j)]++;  break;
+			    	case 7: ca[11+data.get(i).getColumn(j)]++;  break;
+			    	case 8: ba[11+data.get(i).getColumn(j)]++;  break;
+			    	case 9: fe[11+data.get(i).getColumn(j)]++;  break;
+			    	case 10: totals[1]++; break;
+			    	}
+				}
+				else if(data.get(i).getColumn(10)==3) {
+					switch(j) {
+			    	case 1: ri[22+data.get(i).getColumn(j)]++; break;
+			    	case 2: na[22+data.get(i).getColumn(j)]++;  break;
+			    	case 3: mg[22+data.get(i).getColumn(j)]++; break;
+			    	case 4:	al[22+data.get(i).getColumn(j)]++;  break;
+			    	case 5: si[22+data.get(i).getColumn(j)]++;  break;
+			    	case 6: k[22+data.get(i).getColumn(j)]++;  break;
+			    	case 7: ca[22+data.get(i).getColumn(j)]++;  break;
+			    	case 8: ba[22+data.get(i).getColumn(j)]++;  break;
+			    	case 9: fe[22+data.get(i).getColumn(j)]++;  break;
+			    	case 10: totals[2]++; break;
+			    	}
+				}
+				else if(data.get(i).getColumn(10)==4) {
+					switch(j) {
+			    	case 1: ri[33+data.get(i).getColumn(j)]++; break;
+			    	case 2: na[33+data.get(i).getColumn(j)]++;  break;
+			    	case 3: mg[33+data.get(i).getColumn(j)]++; break;
+			    	case 4:	al[33+data.get(i).getColumn(j)]++;  break;
+			    	case 5: si[33+data.get(i).getColumn(j)]++;  break;
+			    	case 6: k[33+data.get(i).getColumn(j)]++;  break;
+			    	case 7: ca[33+data.get(i).getColumn(j)]++;  break;
+			    	case 8: ba[33+data.get(i).getColumn(j)]++;  break;
+			    	case 9: fe[33+data.get(i).getColumn(j)]++;  break;
+			    	case 10: totals[3]++; break;
+			    	}
+				}
+				else if(data.get(i).getColumn(10)==5) {
+					switch(j) {
+			    	case 1: ri[44+data.get(i).getColumn(j)]++; break;
+			    	case 2: na[44+data.get(i).getColumn(j)]++;  break;
+			    	case 3: mg[44+data.get(i).getColumn(j)]++; break;
+			    	case 4:	al[44+data.get(i).getColumn(j)]++;  break;
+			    	case 5: si[44+data.get(i).getColumn(j)]++;  break;
+			    	case 6: k[44+data.get(i).getColumn(j)]++;  break;
+			    	case 7: ca[44+data.get(i).getColumn(j)]++;  break;
+			    	case 8: ba[44+data.get(i).getColumn(j)]++;  break;
+			    	case 9: fe[44+data.get(i).getColumn(j)]++;  break;
+			    	case 10: totals[4]++; break;
+			    	}
+				}
+				else if(data.get(i).getColumn(10)==6) {
+					switch(j) {
+			    	case 1: ri[55+data.get(i).getColumn(j)]++; break;
+			    	case 2: na[55+data.get(i).getColumn(j)]++;  break;
+			    	case 3: mg[55+data.get(i).getColumn(j)]++; break;
+			    	case 4:	al[55+data.get(i).getColumn(j)]++;  break;
+			    	case 5: si[55+data.get(i).getColumn(j)]++;  break;
+			    	case 6: k[55+data.get(i).getColumn(j)]++;  break;
+			    	case 7: ca[55+data.get(i).getColumn(j)]++;  break;
+			    	case 8: ba[55+data.get(i).getColumn(j)]++;  break;
+			    	case 9: fe[55+data.get(i).getColumn(j)]++;  break;
+			    	case 10: totals[5]++; break;
+			    	}
+				}
+				else if(data.get(i).getColumn(10)==7) {
+					switch(j) {
+			    	case 1: ri[66+data.get(i).getColumn(j)]++; break;
+			    	case 2: na[66+data.get(i).getColumn(j)]++;  break;
+			    	case 3: mg[66+data.get(i).getColumn(j)]++; break;
+			    	case 4:	al[66+data.get(i).getColumn(j)]++;  break;
+			    	case 5: si[66+data.get(i).getColumn(j)]++;  break;
+			    	case 6: k[66+data.get(i).getColumn(j)]++;  break;
+			    	case 7: ca[66+data.get(i).getColumn(j)]++;  break;
+			    	case 8: ba[66+data.get(i).getColumn(j)]++;  break;
+			    	case 9: fe[66+data.get(i).getColumn(j)]++;  break;
+			    	case 10: totals[6]++; break;
+			    	}
+				}
+			}
+		}
+		int totalValues=totals[0]+totals[1]+totals[2]+totals[4]+totals[5]+totals[6];
+		float p1= (float) totals[0]/totalValues;
+		float p2= (float) totals[1]/totalValues;
+		float p3= (float) totals[2]/totalValues;
+		float p4= (float) totals[3]/totalValues;
+		float p5= (float) totals[4]/totalValues;
+		float p6= (float) totals[5]/totalValues;
+		float p7= (float) totals[6]/totalValues;
+		float[] pi= {p1, p2, p3, p4, p5, p6, p7};
+		float[] probability= new float [63];
+		float[] finalProbability= new float[7];  //0 building_windows_float_processed, 1 for building_windows_non_float_processed, 2 for vehicle_windows_float_processed
+												//3 for vehicle_windows_non_float_processed (none in this database), 4  for containers, 5 for tableware, 6 for headlamps
+		
+		for (int i=0; i<4; i++) {
+			if(i!=3) {
+			probability[9*i+0]=(float) (ri[11*i+values[0]])/totals[i];
+			probability[9*i+1]=(float) (na[11*i+values[1]])/totals[i];
+			probability[9*i+2]=(float) (mg[11*i+values[2]])/totals[i];
+			probability[9*i+3]=(float) (al[11*i+values[3]])/totals[i];
+			probability[9*i+4]=(float) (si[11*i+values[4]])/totals[i];
+			probability[9*i+5]=(float) (k[11*i+values[5]])/totals[i];
+			probability[9*i+6]=(float) (ca[11*i+values[6]])/totals[i];
+			probability[9*i+7]=(float) (ba[11*i+values[7]])/totals[i];
+			probability[9*i+8]=(float) (fe[11*i+values[8]])/totals[i];
+			
+			finalProbability[i]=(float) probability[9*i+0]*probability[9*i+1]*probability[9*i+2]*probability[9*i+3]*probability[9*i+4]*probability[9*i+5]
+					*probability[9*i+6]*probability[9*i+7]*probability[9*i+8]*pi[i];
+			}
+		}
+		if (finalProbability[0]>=finalProbability[1] && finalProbability[0]>=finalProbability[2] && finalProbability[0]>=finalProbability[3]
+				 && finalProbability[0]>=finalProbability[4]  && finalProbability[0]>=finalProbability[5]  && finalProbability[0]>=finalProbability[6]) {
+			System.out.println("Building Windows Float processed has the biggest probability");
+		}
+		else if (finalProbability[1]>=finalProbability[0] && finalProbability[1]>=finalProbability[2] && finalProbability[1]>=finalProbability[3]
+				 && finalProbability[1]>=finalProbability[4]  && finalProbability[1]>=finalProbability[5]  && finalProbability[1]>=finalProbability[6]) {
+			System.out.println("Building Windows Non Float processed has the biggest probability");
+		}
+		else if (finalProbability[2]>=finalProbability[0] && finalProbability[2]>=finalProbability[1] && finalProbability[2]>=finalProbability[3]
+				 && finalProbability[2]>=finalProbability[4]  && finalProbability[2]>=finalProbability[5]  && finalProbability[2]>=finalProbability[6]) {
+			System.out.println("Vehicle Windows Float Processed has the biggest probability");
+		}
+		else if (finalProbability[3]>=finalProbability[0] && finalProbability[3]>=finalProbability[1] && finalProbability[3]>=finalProbability[2]
+				 && finalProbability[3]>=finalProbability[4]  && finalProbability[3]>=finalProbability[5]  && finalProbability[3]>=finalProbability[6]) {
+			System.out.println("Vehicle Windows Non Float Processed has the biggest probability");
+		}
+		else if (finalProbability[4]>=finalProbability[0] && finalProbability[4]>=finalProbability[1] && finalProbability[4]>=finalProbability[2]
+				 && finalProbability[4]>=finalProbability[3]  && finalProbability[4]>=finalProbability[5]  && finalProbability[4]>=finalProbability[6]) {
+			System.out.println("Containers has the biggest probability");
+		}
+		else if (finalProbability[5]>=finalProbability[0] && finalProbability[5]>=finalProbability[1] && finalProbability[5]>=finalProbability[2]
+				 && finalProbability[5]>=finalProbability[3]  && finalProbability[5]>=finalProbability[4]  && finalProbability[5]>=finalProbability[6]) {
+			System.out.println("Tableware has the biggest probability");
+		}
+		else if (finalProbability[6]>=finalProbability[0] && finalProbability[6]>=finalProbability[1] && finalProbability[6]>=finalProbability[2]
+				 && finalProbability[6]>=finalProbability[3]  && finalProbability[6]>=finalProbability[4]  && finalProbability[6]>=finalProbability[5]) {
+			System.out.println("Headlamps has the biggest probability");
+		}
 }
 	///////////////////////////////////10%/////////////////////////////////////////////////////////////////
 	//shuffles data in one column of HouseVotes
