@@ -335,21 +335,91 @@ public class main {
 		numeratorRepublican = numeratorRepublican * houseVotesPartyProbability(data, "republican");
 		
 		float probabilityDemocrat = numeratorDemocrat/denominatorDemocrat;
-		System.out.println("probabilityDemocrat = " + probabilityDemocrat);
+		//System.out.println("probabilityDemocrat = " + probabilityDemocrat);
 		float probabilityRepublican = numeratorRepublican/denominatorRepublican;
-		System.out.println("probabilityRepublican = " + probabilityRepublican);
+		//System.out.println("probabilityRepublican = " + probabilityRepublican);
 		
 		if(probabilityDemocrat > probabilityRepublican) {
-			System.out.println("more likely to be democrat");
+			//System.out.println("more likely to be democrat");
 			return "democrat";
 		}
 		else if(probabilityRepublican > probabilityDemocrat) {
-			System.out.println("more likely to be republican");
+			//System.out.println("more likely to be republican");
 			return "republican";
 		}
 		else {
 			return "?";
 		}
+	}
+	
+	public static float houseVotesCrossValidation(ArrayList<HouseVotes> data) {
+		//shuffle the dataset randomly
+		Random randnum = new Random();
+		ArrayList<HouseVotes> listCopy = (ArrayList<HouseVotes>) data.clone();
+		ArrayList<HouseVotes> newList = new ArrayList<HouseVotes>();
+		while(!listCopy.isEmpty()) {
+			int index = randnum.nextInt(listCopy.size());
+			newList.add(listCopy.get(index));
+			listCopy.remove(index);
+		}
+		
+		//split dataset into 10 groups
+		int groupSize = newList.size()/10;
+		ArrayList<ArrayList<HouseVotes>> groups = new ArrayList<ArrayList<HouseVotes>>();
+		//make the first nine groups
+		for(int i = 0; i < 9; i++) {
+			ArrayList<HouseVotes> newGroup = new ArrayList<HouseVotes>();
+			for(int j = 0; j < groupSize; j++) {
+				newGroup.add(newList.get(0));
+				newList.remove(0);
+			}
+			groups.add(newGroup);
+		}
+		//make the last group
+		ArrayList<HouseVotes> lastGroup = new ArrayList<HouseVotes>();
+		while(!newList.isEmpty()) {
+			lastGroup.add(newList.get(0));
+			newList.remove(0);
+		}
+		groups.add(lastGroup);
+		
+		//keep track of successes
+		int correctGuesses = 0;
+		int totalGuesses = 0;
+		//for each group
+		for(int k = 0; k < groups.size(); k++) {
+			//select test data set
+			ArrayList<HouseVotes> testGroup = groups.get(k);
+			
+			//construct training group
+			ArrayList<HouseVotes> trainingGroup = new ArrayList<HouseVotes>();
+			//for each of the partitions
+			for(int m = 0; m < groups.size(); m++) {
+				//skip test group
+				if(m != k) {
+					trainingGroup.addAll(groups.get(m));
+				}
+			}
+			
+			//go through the test data
+			for(int n = 0; n < testGroup.size(); n++) {
+				//get the data for that observation
+				String testParty = testGroup.get(n).dataArray[0];
+				String[] testVotes = new String[15];
+				for(int p = 1; p < testGroup.get(n).dataArray.length-1; p++) {
+					testVotes[p-1] = testGroup.get(n).dataArray[p];
+				}
+				String trainingParty = partyGivenVotes(trainingGroup, testVotes);
+				if(trainingParty.equals(testParty)) {
+					correctGuesses++;
+					totalGuesses++;
+				}
+				else {
+					totalGuesses++;
+				}
+			}
+		}
+		return (float)correctGuesses/(float)totalGuesses;
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////breastCancer//////////////////////////////////////////////////////////////////////////////////////////////////
