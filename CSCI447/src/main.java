@@ -27,6 +27,8 @@ public class main {
 		}
 		//int[] values1= {4,4,6,5,4,5,3,1,7};
 		//glass(glassData, values1);
+		//ArrayList<Glass> shuffle=glassPercent(glassData);
+	
 		
 		File file2 = new File("./iris.data");
 		Scanner scanner2 = new Scanner(file2);
@@ -45,7 +47,8 @@ public class main {
 			//irisData.get(k).printIris();
 		}
 		int[] values1= {4,1,7,7};
-		iris(irisData, values1);
+		//iris(irisData, values1);
+		//ArrayList<Iris> shuffle=irisPercent(irisData);
 		
 		File file3 = new File("./house-votes-84.data");
 		Scanner scanner3 = new Scanner(file3);
@@ -109,7 +112,7 @@ public class main {
 		
 		//int[] values1= {0,1,2,1,0,3,1,1,0,2,1,1,0,2,2,0,0,0,1,0,1,2,0,0,0,0,0,3,4,0,0,0,0,0,1};
 		//soyBean(soyBeanData, values1);
-		
+		ArrayList<SoyBean> shuffle=soyBeanPercent(soyBeanData);
 		File file5 = new File("./breast-cancer-wisconsin.data");
 		Scanner scanner5 = new Scanner(file5);
 		ArrayList<BreastCancer> breastCancerData = new ArrayList<BreastCancer>();
@@ -124,6 +127,11 @@ public class main {
 	    }
 		int[] values= {5, 1, 1, 7, 1, 1, 9, 4, 10};
 		//breastCancer(breastCancerData, values);
+		//ArrayList<BreastCancer> shuffle=breastCancerPercent(breastCancerData);
+		//for(int k = 0; k < breastCancerData.size(); k++) {
+			//breastCancerData.get(k).printBreastCancer();
+		//}
+		
 	}
 
 /////////////////////////////////////////////Pre processing/////////////////////////////////////////////////////////////////////////////////////////
@@ -1090,5 +1098,208 @@ public class main {
 			return newList;
 		}
 	
+	/////////////////////////////BreastCancer/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		public static ArrayList<BreastCancer> breastCancerPercent(ArrayList<BreastCancer> data) {
+			int tenPercent=((10*11)/100); //10 percent of features plus one more (for data such as iris in where 10%=0.4)
+			ArrayList<Integer> repeatedColumns=new ArrayList<>();
+			Random ran=new Random();
+			int randomColumn=-1;
+			int i=0;
+			ArrayList<BreastCancer> listCopy = (ArrayList<BreastCancer>) data.clone();
+			while(i<=tenPercent) {
+				randomColumn=ran.nextInt(9)+1; //Ignore ID number column and class Column
+				while(!repeatedColumns.contains(randomColumn)){
+					System.out.println(randomColumn);
+					repeatedColumns.add(randomColumn);
+					listCopy=breastCancerShuffle(listCopy, randomColumn);
+					i++;
+				}
+			}
+			return listCopy;
+		}
+		
+		public static ArrayList<BreastCancer> breastCancerShuffle(ArrayList<BreastCancer> data, int column){
+			ArrayList<Integer> repeatedColumns=new ArrayList<>();
+			int tempValue=0;
+			int randomRow1=0;
+			int randomRow2=0;
+			int i=0;
+			int numRows=0;
+			//Check for even or odd number of rows. If odd make it even
+			if(data.size()%2!=0) {
+				numRows=data.size()-1;
+			}
+			else {
+				numRows=data.size();
+			}
+			Random ran=new Random();
+			while(i<=numRows) {
+				randomRow1=ran.nextInt(data.size());//Ignore ID number column and class Column
+				randomRow2=ran.nextInt(data.size());//Ignore ID number column and class Column
+				while(!repeatedColumns.contains(randomRow1) && !repeatedColumns.contains(randomRow2)) {
+					repeatedColumns.add(randomRow1);
+					repeatedColumns.add(randomRow2);
+					tempValue=data.get(randomRow1).getColumn(column);
+					data.get(randomRow1).setColumn(column, data.get(randomRow2).getColumn(column));
+					data.get(randomRow2).setColumn(column, tempValue);
+					i=i+2;
+					//System.out.println(i);
+				}
+			}
+			return data;
+		}
+		
+	///////////////////////////////////////////////Glass//////////////////////////////////////////////////////////////////////////////////////////////////
+		public static ArrayList<Glass> glassPercent(ArrayList<Glass> data) {
+			int tenPercent=((10*11)/100); //10 percent of features plus one more (for data such as iris in where 10%=0.4)
+			ArrayList<Integer> repeatedColumns=new ArrayList<>();
+			Random ran=new Random();
+			int randomColumn=-1;
+			int i=0;
+			ArrayList<Glass> listCopy = (ArrayList<Glass>) data.clone();
+			while(i<=tenPercent) {
+				randomColumn=ran.nextInt(9)+1; //Ignore ID number column and class Column
+				while(!repeatedColumns.contains(randomColumn)){
+					System.out.println(randomColumn);
+					repeatedColumns.add(randomColumn);
+					listCopy=glassShuffle(listCopy, randomColumn);
+					i++;
+				}
+			}
+			return listCopy;
+		}
+		
+		public static ArrayList<Glass> glassShuffle(ArrayList<Glass> data, int column){
+			ArrayList<Integer> repeatedColumns=new ArrayList<>();
+			int tempValue=0;
+			int randomRow1=0;
+			int randomRow2=0;
+			int i=0;
+			int numRows=0;
+			//Check for even or odd number of rows. If odd make it even
+			if(data.size()%2!=0) {
+				numRows=data.size()-1;
+			}
+			else {
+				numRows=data.size();
+			}
+			Random ran=new Random();
+			while(i<=numRows) {
+				randomRow1=ran.nextInt(data.size());//Ignore ID number column and class Column
+				randomRow2=ran.nextInt(data.size());//Ignore ID number column and class Column
+				while(!repeatedColumns.contains(randomRow1) && !repeatedColumns.contains(randomRow2)) {
+					repeatedColumns.add(randomRow1);
+					repeatedColumns.add(randomRow2);
+					tempValue=data.get(randomRow1).getColumn(column);
+					data.get(randomRow1).setGroup(column, data.get(randomRow2).getColumn(column));
+					data.get(randomRow2).setGroup(column, tempValue);
+					i=i+2;
+					//System.out.println(i);
+				}
+			}
+			return data;
+		}
+		
+	/////////////////////////////////////////////////Iris/////////////////////////////////////////////////////////////////////////////////////////////////
+		public static ArrayList<Iris> irisPercent(ArrayList<Iris> data) {
+			int tenPercent=(((10*4)+1)/100); //10 percent of features plus one more (for data such as iris in where 10%=0.4)
+			ArrayList<Integer> repeatedColumns=new ArrayList<>();
+			Random ran=new Random();
+			int randomColumn=-1;
+			int i=0;
+			ArrayList<Iris> listCopy = (ArrayList<Iris>) data.clone();
+			while(i<=tenPercent) {
+				randomColumn=ran.nextInt(3); //class Column
+				while(!repeatedColumns.contains(randomColumn)){
+					System.out.println(randomColumn);
+					repeatedColumns.add(randomColumn);
+					listCopy=irisShuffle(listCopy, randomColumn);
+					i++;
+				}
+			}
+			return listCopy;
+		}
+		
+		public static ArrayList<Iris> irisShuffle(ArrayList<Iris> data, int column){
+			ArrayList<Integer> repeatedColumns=new ArrayList<>();
+			int tempValue=0;
+			int randomRow1=0;
+			int randomRow2=0;
+			int i=0;
+			int numRows=0;
+			//Check for even or odd number of rows. If odd make it even
+			if(data.size()%2!=0) {
+				numRows=data.size()-1;
+			}
+			else {
+				numRows=data.size();
+			}
+			Random ran=new Random();
+			while(i<=numRows) {
+				randomRow1=ran.nextInt(data.size());//Ignore ID number column and class Column
+				randomRow2=ran.nextInt(data.size());//Ignore ID number column and class Column
+				while(!repeatedColumns.contains(randomRow1) && !repeatedColumns.contains(randomRow2)) {
+					repeatedColumns.add(randomRow1);
+					repeatedColumns.add(randomRow2);
+					tempValue=data.get(randomRow1).getColumn(column);
+					data.get(randomRow1).setGroup(column, data.get(randomRow2).getColumn(column));
+					data.get(randomRow2).setGroup(column, tempValue);
+					i=i+2;
+					//System.out.println(i);
+				}
+			}
+			return data;
+		}
+		
+	////////////////////////////////////////////Soy Bean//////////////////////////////////////////////////////////////////////////////////////////////////
+		public static ArrayList<SoyBean> soyBeanPercent(ArrayList<SoyBean> data) {
+			int tenPercent=((10*35)/100); //10 percent of features plus one more (for data such as iris in where 10%=0.4)
+			ArrayList<Integer> repeatedColumns=new ArrayList<>();
+			Random ran=new Random();
+			int randomColumn=-1;
+			int i=0;
+			ArrayList<SoyBean> listCopy = (ArrayList<SoyBean>) data.clone();
+			while(i<=tenPercent) {
+				randomColumn=ran.nextInt(34); //Ignore ID number column and class Column
+				while(!repeatedColumns.contains(randomColumn)){
+					System.out.println(randomColumn);
+					repeatedColumns.add(randomColumn);
+					listCopy=soyBeanShuffle(listCopy, randomColumn);
+					i++;
+				}
+			}
+			return listCopy;
+		}
+		
+		public static ArrayList<SoyBean> soyBeanShuffle(ArrayList<SoyBean> data, int column){
+			ArrayList<Integer> repeatedColumns=new ArrayList<>();
+			int tempValue=0;
+			int randomRow1=0;
+			int randomRow2=0;
+			int i=0;
+			int numRows=0;
+			//Check for even or odd number of rows. If odd make it even
+			if(data.size()%2!=0) {
+				numRows=data.size()-1;
+			}
+			else {
+				numRows=data.size();
+			}
+			Random ran=new Random();
+			while(i<=numRows) {
+				randomRow1=ran.nextInt(data.size());//Ignore ID number column and class Column
+				randomRow2=ran.nextInt(data.size());//Ignore ID number column and class Column
+				while(!repeatedColumns.contains(randomRow1) && !repeatedColumns.contains(randomRow2)) {
+					repeatedColumns.add(randomRow1);
+					repeatedColumns.add(randomRow2);
+					tempValue=data.get(randomRow1).getColumn(column);
+					data.get(randomRow1).setColumn(column, data.get(randomRow2).getColumn(column));
+					data.get(randomRow2).setColumn(column, tempValue);
+					i=i+2;
+					//System.out.println(i);
+				}
+			}
+			return data;
+		}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

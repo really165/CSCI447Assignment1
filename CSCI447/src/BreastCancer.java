@@ -50,5 +50,20 @@ public class BreastCancer {
     	}
     	return 1000;
     }
+    public void setColumn(int column, int value) {
+    	switch(column) {
+    	case 0: this.ID=value;
+    	case 1: this.clumpThickness=value;
+    	case 2: this.uniformityCellSize=value; 
+    	case 3: this.uniformityCellShape=value;
+    	case 4:	this.marginalAdhesion=value; 
+    	case 5: this.singleEpithelialCellSize=value; 
+    	case 6: this.bareNuclei=value; 
+    	case 7: this.blandChromatin=value; 
+    	case 8: this.normalNucleoli=value; 
+    	case 9: this.mitoses=value; 
+    	case 10: this.type=value; 
+    	}
+    }
 }
 

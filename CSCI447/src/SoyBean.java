@@ -146,4 +146,43 @@ public class SoyBean {
     	}
     	return 1000;
     }
+	public void setColumn(int column, int value) {
+    	switch(column) {
+    	case 0: this.date=value;
+    	case 1: this.plantStand=value;
+    	case 2: this.precip=value; 
+    	case 3: this.temp=value;
+    	case 4:	this.hail=value; 
+    	case 5: this.cropHist=value; 
+    	case 6: this.areaDamage=value; 
+    	case 7: this.severity=value; 
+    	case 8: this.seedTmt=value; 
+    	case 9: this.germination=value; 
+    	case 10: this.plantGrowth=value;
+    	case 11: this.leaves=value;
+    	case 12: this.leafspotsHalo=value;
+    	case 13: this.leafspotsMarg=value; 
+    	case 14: this.leafspotsSize=value;
+    	case 15: this.leafShread=value; 
+    	case 16: this.leafMalf=value; 
+    	case 17: this.leafMild=value; 
+    	case 18: this.stem=value; 
+    	case 19: this.lodging=value; 
+    	case 20: this.stemCankers=value; 
+    	case 21: this.cankerLesion=value;
+    	case 22: this.fruitingBodies=value;
+    	case 23: this.externalDecay=value;
+    	case 24: this.mycelium=value; 
+    	case 25: this.intDiscolor=value;
+    	case 26: this.sclerotia=value; 
+    	case 27: this.fruitPods=value; 
+    	case 28: this.fruitSpots=value; 
+    	case 29: this.seed=value; 
+    	case 30: this.moldGrowth=value; 
+    	case 31: this.seedDiscolor=value; 
+    	case 32: this.seedSize=value;
+    	case 33: this.shriveling=value;
+    	case 34: this.roots=value;
+    	}
+    }
 }
