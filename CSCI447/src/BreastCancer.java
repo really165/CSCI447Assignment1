@@ -12,19 +12,20 @@ public class BreastCancer {
 	private int normalNucleoli;
 	private int mitoses;
 	private int type;
+	int[] dataArray = new int[11];
     
     BreastCancer(int IDnumber, int ct, int ucSize, int ucShape, int mA, int secs, int bn, int bc, int nc, int m, int type){
-    	this.ID = IDnumber;
-    	this.clumpThickness = ct;
-    	this.uniformityCellSize = ucSize;
-    	this.uniformityCellShape = ucShape;
-    	this.marginalAdhesion = mA;
-    	this.singleEpithelialCellSize = secs;
-    	this.bareNuclei = bn;
-    	this.blandChromatin = bc;
-    	this.normalNucleoli = nc;
-    	this.mitoses = m;
-    	this.type = type;
+    	this.ID = dataArray[0]= IDnumber;
+    	this.clumpThickness  = dataArray[1]= ct;
+    	this.uniformityCellSize  = dataArray[2]= ucSize;
+    	this.uniformityCellShape  = dataArray[3]= ucShape;
+    	this.marginalAdhesion  = dataArray[4]= mA;
+    	this.singleEpithelialCellSize  = dataArray[5]= secs;
+    	this.bareNuclei  = dataArray[6]= bn;
+    	this.blandChromatin  = dataArray[7]= bc;
+    	this.normalNucleoli  = dataArray[8]= nc;
+    	this.mitoses  = dataArray[9]= m;
+    	this.type  = dataArray[10]= type;
     }
     
     public void printBreastCancer(){

@@ -113,6 +113,7 @@ public class main {
 		//int[] values1= {0,1,2,1,0,3,1,1,0,2,1,1,0,2,2,0,0,0,1,0,1,2,0,0,0,0,0,3,4,0,0,0,0,0,1};
 		//soyBean(soyBeanData, values1);
 		ArrayList<SoyBean> shuffle=soyBeanPercent(soyBeanData);
+		
 		File file5 = new File("./breast-cancer-wisconsin.data");
 		Scanner scanner5 = new Scanner(file5);
 		ArrayList<BreastCancer> breastCancerData = new ArrayList<BreastCancer>();
@@ -131,6 +132,7 @@ public class main {
 		//for(int k = 0; k < breastCancerData.size(); k++) {
 			//breastCancerData.get(k).printBreastCancer();
 		//}
+		breastCancerCrossValidation(breastCancerData);
 		
 	}
 
@@ -431,7 +433,7 @@ public class main {
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////breastCancer//////////////////////////////////////////////////////////////////////////////////////////////////
-	public static void breastCancer(ArrayList<BreastCancer> data, int[] values) {
+	public static int breastCancer(ArrayList<BreastCancer> data, int[] values) {
 		int totalBenign=0;
 		int totalMalignant=0;
 		int totalValues=0;
@@ -530,18 +532,91 @@ public class main {
 		System.out.println(pMalignant);
 		if(pBenign>pMalignant) {
 			System.out.println("Benign have a higher probability");
+			return 2;
 		}
 		else if(pBenign<pMalignant) {
 			System.out.println("Malignant have a higher probability");
+			return 4;
 		}
 		else { //Same
 			System.out.println("Benign and Malignant have the same probability");
+			return 0;
 		}
 }
 	
+	public static float breastCancerCrossValidation(ArrayList<BreastCancer> data) {
+		//shuffle the dataset randomly
+		Random randnum = new Random();
+		ArrayList<BreastCancer> listCopy = (ArrayList<BreastCancer>) data.clone();
+		ArrayList<BreastCancer> newList = new ArrayList<BreastCancer>();
+		while(!listCopy.isEmpty()) {
+			int index = randnum.nextInt(listCopy.size());
+			newList.add(listCopy.get(index));
+			listCopy.remove(index);
+		}
+		
+		//split dataset into 10 groups
+		int groupSize = newList.size()/10;
+		ArrayList<ArrayList<BreastCancer>> groups = new ArrayList<ArrayList<BreastCancer>>();
+		//make the first nine groups
+		for(int i = 0; i < 9; i++) {
+			ArrayList<BreastCancer> newGroup = new ArrayList<BreastCancer>();
+			for(int j = 0; j < groupSize; j++) {
+				newGroup.add(newList.get(0));
+				newList.remove(0);
+			}
+			groups.add(newGroup);
+		}
+		//make the last group
+		ArrayList<BreastCancer> lastGroup = new ArrayList<BreastCancer>();
+		while(!newList.isEmpty()) {
+			lastGroup.add(newList.get(0));
+			newList.remove(0);
+		}
+		groups.add(lastGroup);
+		
+		//keep track of successes
+		int correctGuesses = 0;
+		int totalGuesses = 0;
+		//for each group
+		for(int k = 0; k < groups.size(); k++) {
+			//select test data set
+			ArrayList<BreastCancer> testGroup = groups.get(k);
+			
+			//construct training group
+			ArrayList<BreastCancer> trainingGroup = new ArrayList<BreastCancer>();
+			//for each of the partitions
+			for(int m = 0; m < groups.size(); m++) {
+				//skip test group
+				if(m != k) {
+					trainingGroup.addAll(groups.get(m));
+				}
+			}
+			
+			//go through the test data
+			for(int n = 0; n < testGroup.size(); n++) {
+				//get the data for that observation
+				int testParty = testGroup.get(n).dataArray[10];
+				int[] testVotes = new int[15];
+				for(int p = 1; p < testGroup.get(n).dataArray.length-1; p++) {
+					testVotes[p-1] = testGroup.get(n).dataArray[p];
+				}
+				int trainingParty = breastCancer(trainingGroup, testVotes);
+				if(trainingParty==(testParty)) {
+					correctGuesses++;
+					totalGuesses++;
+				}
+				else {
+					totalGuesses++;
+				}
+			}
+		}
+		return (float)correctGuesses/(float)totalGuesses;
+	}
+	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////Soy Bean//////////////////////////////////////////////////////////////
-	public static void soyBean(ArrayList<SoyBean> data, int[] values) {
+	public static int soyBean(ArrayList<SoyBean> data, int[] values) {
 		int[] totals=new int[4]; //0 for 1, 1 for 2, 2 for 3, 3 for 4 
 		
 		//For D1 
@@ -803,22 +878,96 @@ public class main {
 
 		if (finalProbability[0]>=finalProbability[1] && finalProbability[0]>=finalProbability[2] && finalProbability[0]>=finalProbability[3]) {
 			System.out.println("D1 has the biggest probability");
+			return 1;
 		}
 		else if (finalProbability[1]>=finalProbability[0] && finalProbability[1]>=finalProbability[2] && finalProbability[1]>=finalProbability[3]) {
 			System.out.println("D2 has the biggest probability");
+			return 2;
 		}
 		else if (finalProbability[2]>=finalProbability[1] && finalProbability[2]>=finalProbability[0] && finalProbability[2]>=finalProbability[3]) {
 			System.out.println("D3 has the biggest probability");
+			return 3;
 		}
 		else if (finalProbability[3]>=finalProbability[1] && finalProbability[3]>=finalProbability[2] && finalProbability[3]>=finalProbability[0]) {
 			System.out.println("D4 has the biggest probability");
+			return 4;
 		}
+		return 1;
 		
 			
 }
+	public static float soyBeanCrossValidation(ArrayList<SoyBean> data) {
+		//shuffle the dataset randomly
+		Random randnum = new Random();
+		ArrayList<SoyBean> listCopy = (ArrayList<SoyBean>) data.clone();
+		ArrayList<SoyBean> newList = new ArrayList<SoyBean>();
+		while(!listCopy.isEmpty()) {
+			int index = randnum.nextInt(listCopy.size());
+			newList.add(listCopy.get(index));
+			listCopy.remove(index);
+		}
+		
+		//split dataset into 10 groups
+		int groupSize = newList.size()/10;
+		ArrayList<ArrayList<SoyBean>> groups = new ArrayList<ArrayList<SoyBean>>();
+		//make the first nine groups
+		for(int i = 0; i < 9; i++) {
+			ArrayList<SoyBean> newGroup = new ArrayList<SoyBean>();
+			for(int j = 0; j < groupSize; j++) {
+				newGroup.add(newList.get(0));
+				newList.remove(0);
+			}
+			groups.add(newGroup);
+		}
+		//make the last group
+		ArrayList<SoyBean> lastGroup = new ArrayList<SoyBean>();
+		while(!newList.isEmpty()) {
+			lastGroup.add(newList.get(0));
+			newList.remove(0);
+		}
+		groups.add(lastGroup);
+		
+		//keep track of successes
+		int correctGuesses = 0;
+		int totalGuesses = 0;
+		//for each group
+		for(int k = 0; k < groups.size(); k++) {
+			//select test data set
+			ArrayList<SoyBean> testGroup = groups.get(k);
+			
+			//construct training group
+			ArrayList<SoyBean> trainingGroup = new ArrayList<SoyBean>();
+			//for each of the partitions
+			for(int m = 0; m < groups.size(); m++) {
+				//skip test group
+				if(m != k) {
+					trainingGroup.addAll(groups.get(m));
+				}
+			}
+			
+			//go through the test data
+			for(int n = 0; n < testGroup.size(); n++) {
+				//get the data for that observation
+				int testParty = testGroup.get(n).getColumn(35);
+				int[] testVotes = new int[35];
+				for(int p = 0; p < 35; p++) {
+					testVotes[p] = testGroup.get(n).getColumn(p);
+				}
+				int trainingParty = soyBean(trainingGroup, testVotes);
+				if(trainingParty==testParty) {
+					correctGuesses++;
+					totalGuesses++;
+				}
+				else {
+					totalGuesses++;
+				}
+			}
+		}
+		return (float)correctGuesses/(float)totalGuesses;
+	}
 	
 ////////////////////////////////Glass///////////////////////////////////////////////////////////////////////////////////////
-	public static void glass(ArrayList<Glass> data, int[] values) {
+	public static int glass(ArrayList<Glass> data, int[] values) {
 		int[] totals=new int[7]; //0 building_windows_float_processed, 1 for building_windows_non_float_processed, 2 for vehicle_windows_float_processed
 	      						//3 for vehicle_windows_non_float_processed (none in this database), 4  for containers, 5 for tableware, 6 for headlamps
 		
@@ -968,35 +1117,113 @@ public class main {
 		if (finalProbability[0]>=finalProbability[1] && finalProbability[0]>=finalProbability[2] && finalProbability[0]>=finalProbability[3]
 				 && finalProbability[0]>=finalProbability[4]  && finalProbability[0]>=finalProbability[5]  && finalProbability[0]>=finalProbability[6]) {
 			System.out.println("Building Windows Float processed has the biggest probability");
+			return 1;
 		}
 		else if (finalProbability[1]>=finalProbability[0] && finalProbability[1]>=finalProbability[2] && finalProbability[1]>=finalProbability[3]
 				 && finalProbability[1]>=finalProbability[4]  && finalProbability[1]>=finalProbability[5]  && finalProbability[1]>=finalProbability[6]) {
 			System.out.println("Building Windows Non Float processed has the biggest probability");
+			return 2;
 		}
 		else if (finalProbability[2]>=finalProbability[0] && finalProbability[2]>=finalProbability[1] && finalProbability[2]>=finalProbability[3]
 				 && finalProbability[2]>=finalProbability[4]  && finalProbability[2]>=finalProbability[5]  && finalProbability[2]>=finalProbability[6]) {
 			System.out.println("Vehicle Windows Float Processed has the biggest probability");
+			return 3;
 		}
 		else if (finalProbability[3]>=finalProbability[0] && finalProbability[3]>=finalProbability[1] && finalProbability[3]>=finalProbability[2]
 				 && finalProbability[3]>=finalProbability[4]  && finalProbability[3]>=finalProbability[5]  && finalProbability[3]>=finalProbability[6]) {
 			System.out.println("Vehicle Windows Non Float Processed has the biggest probability");
+			return 4;
 		}
 		else if (finalProbability[4]>=finalProbability[0] && finalProbability[4]>=finalProbability[1] && finalProbability[4]>=finalProbability[2]
 				 && finalProbability[4]>=finalProbability[3]  && finalProbability[4]>=finalProbability[5]  && finalProbability[4]>=finalProbability[6]) {
 			System.out.println("Containers has the biggest probability");
+			return 5;
 		}
 		else if (finalProbability[5]>=finalProbability[0] && finalProbability[5]>=finalProbability[1] && finalProbability[5]>=finalProbability[2]
 				 && finalProbability[5]>=finalProbability[3]  && finalProbability[5]>=finalProbability[4]  && finalProbability[5]>=finalProbability[6]) {
 			System.out.println("Tableware has the biggest probability");
+			return 6;
 		}
 		else if (finalProbability[6]>=finalProbability[0] && finalProbability[6]>=finalProbability[1] && finalProbability[6]>=finalProbability[2]
 				 && finalProbability[6]>=finalProbability[3]  && finalProbability[6]>=finalProbability[4]  && finalProbability[6]>=finalProbability[5]) {
 			System.out.println("Headlamps has the biggest probability");
+			return 7;
 		}
+		return 1;
 }
+
+	public static float glassCrossValidation(ArrayList<Glass> data) {
+		//shuffle the dataset randomly
+		Random randnum = new Random();
+		ArrayList<Glass> listCopy = (ArrayList<Glass>) data.clone();
+		ArrayList<Glass> newList = new ArrayList<Glass>();
+		while(!listCopy.isEmpty()) {
+			int index = randnum.nextInt(listCopy.size());
+			newList.add(listCopy.get(index));
+			listCopy.remove(index);
+		}
+		
+		//split dataset into 10 groups
+		int groupSize = newList.size()/10;
+		ArrayList<ArrayList<Glass>> groups = new ArrayList<ArrayList<Glass>>();
+		//make the first nine groups
+		for(int i = 0; i < 9; i++) {
+			ArrayList<Glass> newGroup = new ArrayList<Glass>();
+			for(int j = 0; j < groupSize; j++) {
+				newGroup.add(newList.get(0));
+				newList.remove(0);
+			}
+			groups.add(newGroup);
+		}
+		//make the last group
+		ArrayList<Glass> lastGroup = new ArrayList<Glass>();
+		while(!newList.isEmpty()) {
+			lastGroup.add(newList.get(0));
+			newList.remove(0);
+		}
+		groups.add(lastGroup);
+		
+		//keep track of successes
+		int correctGuesses = 0;
+		int totalGuesses = 0;
+		//for each group
+		for(int k = 0; k < groups.size(); k++) {
+			//select test data set
+			ArrayList<Glass> testGroup = groups.get(k);
+			
+			//construct training group
+			ArrayList<Glass> trainingGroup = new ArrayList<Glass>();
+			//for each of the partitions
+			for(int m = 0; m < groups.size(); m++) {
+				//skip test group
+				if(m != k) {
+					trainingGroup.addAll(groups.get(m));
+				}
+			}
+			
+			//go through the test data
+			for(int n = 0; n < testGroup.size(); n++) {
+				//get the data for that observation
+				int testParty = testGroup.get(n).getColumn(10);
+				int[] testVotes = new int[15];
+				for(int p = 0; p < 9; p++) {
+					testVotes[p] = testGroup.get(n).getColumn(p);
+				}
+				int trainingParty = glass(trainingGroup, testVotes);
+				if(trainingParty==(testParty)) {
+					correctGuesses++;
+					totalGuesses++;
+				}
+				else {
+					totalGuesses++;
+				}
+			}
+		}
+		return (float)correctGuesses/(float)totalGuesses;
+	}
 	
 ////////////////////////////////////////////Iris/////////////////////////////////////////////////////////////////
-	public static void iris(ArrayList<Iris> data, int[] values) {
+	public static int iris(ArrayList<Iris> data, int[] values) {
 		int[] totals=new int[3]; //0 Iris Setosa, 1 for Iris Versicolour, 2 for Virginica
 	      						
 		int[] sepalLength= new int[33]; //11 for each class
@@ -1056,14 +1283,87 @@ public class main {
 		}
 		if (finalProbability[0]>=finalProbability[1] && finalProbability[0]>=finalProbability[2]) {
 			System.out.println("Iris Setosa has the biggest probability");
+			return 1;
 		}
 		else if (finalProbability[1]>=finalProbability[0] && finalProbability[1]>=finalProbability[2]) {
 			System.out.println("Iris Versicolour has the biggest probability");
+			return 2;
 		}
 		else if (finalProbability[2]>=finalProbability[0] && finalProbability[2]>=finalProbability[1]) {
 			System.out.println("Iris Virginica has the biggest probability");
+			return 3;
 		}
+		return 1;
 }
+	public static float irisCrossValidation(ArrayList<Iris> data) {
+		//shuffle the dataset randomly
+		Random randnum = new Random();
+		ArrayList<Iris> listCopy = (ArrayList<Iris>) data.clone();
+		ArrayList<Iris> newList = new ArrayList<Iris>();
+		while(!listCopy.isEmpty()) {
+			int index = randnum.nextInt(listCopy.size());
+			newList.add(listCopy.get(index));
+			listCopy.remove(index);
+		}
+		
+		//split dataset into 10 groups
+		int groupSize = newList.size()/10;
+		ArrayList<ArrayList<Iris>> groups = new ArrayList<ArrayList<Iris>>();
+		//make the first nine groups
+		for(int i = 0; i < 9; i++) {
+			ArrayList<Iris> newGroup = new ArrayList<Iris>();
+			for(int j = 0; j < groupSize; j++) {
+				newGroup.add(newList.get(0));
+				newList.remove(0);
+			}
+			groups.add(newGroup);
+		}
+		//make the last group
+		ArrayList<Iris> lastGroup = new ArrayList<Iris>();
+		while(!newList.isEmpty()) {
+			lastGroup.add(newList.get(0));
+			newList.remove(0);
+		}
+		groups.add(lastGroup);
+		
+		//keep track of successes
+		int correctGuesses = 0;
+		int totalGuesses = 0;
+		//for each group
+		for(int k = 0; k < groups.size(); k++) {
+			//select test data set
+			ArrayList<Iris> testGroup = groups.get(k);
+			
+			//construct training group
+			ArrayList<Iris> trainingGroup = new ArrayList<Iris>();
+			//for each of the partitions
+			for(int m = 0; m < groups.size(); m++) {
+				//skip test group
+				if(m != k) {
+					trainingGroup.addAll(groups.get(m));
+				}
+			}
+			
+			//go through the test data
+			for(int n = 0; n < testGroup.size(); n++) {
+				//get the data for that observation
+				int testParty = testGroup.get(n).getColumn(4);
+				int[] testVotes = new int[15];
+				for(int p = 0; p < 3; p++) {
+					testVotes[p] = testGroup.get(n).getColumn(p);
+				}
+				int trainingParty = iris(trainingGroup, testVotes);
+				if(trainingParty==(testParty)) {
+					correctGuesses++;
+					totalGuesses++;
+				}
+				else {
+					totalGuesses++;
+				}
+			}
+		}
+		return (float)correctGuesses/(float)totalGuesses;
+	}
 	///////////////////////////////////10%/////////////////////////////////////////////////////////////////
 	//shuffles data in one column of HouseVotes
 		public static ArrayList<HouseVotes> houseVotesShuffle(ArrayList<HouseVotes> data, int column) {
